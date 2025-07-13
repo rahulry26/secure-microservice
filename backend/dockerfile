@@ -1,0 +1,22 @@
+# Stage 1: Builder
+FROM node:20-alpine as builder
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+
+# Stage 2: Runtime (non-root user)
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy only the necessary built files
+COPY --from=builder /app /app
+
+# Drop privileges
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+EXPOSE 3000
+CMD ["node", "index.js"]
