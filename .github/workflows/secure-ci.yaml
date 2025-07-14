@@ -1,0 +1,64 @@
+name: Secure CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  security-checks:
+    name: Static + Container Security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Semgrep (Static Code Analysis)
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: 'auto'
+
+      - name: Build Docker image
+        run: docker build -t secure-microservice-backend .
+
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'secure-microservice-backend'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+          exit-code: '1'  # Fails pipeline if any high/critical found
+
+  deploy:
+    name: Push to Registry (Only if secure)
+    runs-on: ubuntu-latest
+    needs: security-checks
+    if: ${{ success() }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Image
+        run: |
+          docker build -t rahulry26/secure-microservice-backend:latest .
+          docker push rahulry26/secure-microservice-backend:latest
+
+
+
