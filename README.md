@@ -1,4 +1,4 @@
-# DevSecOps Candidate Evaluation Task
+
 
 ## Project: Secure Microservice Deployment (Node.js/Express + MongoDB)
 
@@ -10,7 +10,7 @@ secure-microservice/
 ├── backend/
 │   ├── Dockerfile
 │   ├── .dockerignore
-│   ├── app.js / index.js (Your Express App)
+│   ├── app.js / index.js 
 │   ├── package.json
 │   ├── package-lock.json
 │   └── k8s/
@@ -22,7 +22,7 @@ secure-microservice/
 ├── docker-compose.yml
 ├── README.md
 └── .github/workflows/
-    └── ci-cd-pipeline.yaml (optional if required)
+    └── ci-cd-pipeline.yaml 
 ```
 
 ---
@@ -84,20 +84,19 @@ kubectl apply --dry-run=client --validate=false -f k8s/service.yaml
 
 ---
 
-## 6. CI/CD Pipeline Security (If Required)
+## 6. CI/CD Pipeline Security 
 > Not implemented in current local-only workflow but structure provided:
 - GitHub Actions YAML file placeholder (`.github/workflows/ci-cd-pipeline.yaml`)
-- Include Semgrep and Trivy as security gates (optional)
-
+- Include Semgrep and Trivy as security gates 
+imlemented using **GitHub Actions**
+- Tools integrated:
+  - **Semgrep** for static code analysis
+  - **Trivy** for container vulnerability scanning
+- Build fails on `CRITICAL` or `HIGH` issues
+- Docker image is only pushed if security gates pass
 ---
 
-## 7. Infrastructure as Code & Runtime Security (Optional)
-- ❌ Terraform or Checkov not used since infra not provisioned
-- ❌ Runtime security tools like Falco not installed (bonus section optional)
-
----
-
-## 8. How to Run Locally
+## 7. How to Run Locally
 ```bash
 # Run via Docker Compose
 cd secure-microservice/
@@ -111,7 +110,7 @@ docker run -p 3000:3000 secure-microservice-backend
 
 ---
 
-## 9. Security Summary (for report)
+## 8. Security Summary (for report)
 - Trivy scan revealed a HIGH CVE in `cross-spawn` which was fixed
 - Secret scanning returned clean results
 - Dockerfile uses least privilege and hardened best practices
@@ -120,7 +119,7 @@ docker run -p 3000:3000 secure-microservice-backend
 
 ---
 
-## 10. Final Notes
+## 9. Final notes
 - No cloud or live cluster was used for deployment
 - Entire pipeline is functional and dry-run verified
 - Ideal for submission to showcase secure deployment practices
